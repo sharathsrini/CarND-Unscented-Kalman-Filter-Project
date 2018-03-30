@@ -115,7 +115,7 @@ public:
 
   void Sigma_Point_Prediction(MatrixXd, double);
 
-  void PredictMeanCovariance();
+  void Predict_Mean_Covariance();
 
   void Predict_Radar_Measurement(VectorXd* z_out, MatrixXd* S_out);
 

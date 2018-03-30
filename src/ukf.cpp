@@ -32,7 +32,7 @@ UKF::UKF() {
 
   // Process noise standard deviation yaw acceleration in rad/s^2
   std_yawdd_ = 0.5;
-  
+
   //DO NOT MODIFY measurement noise values below these are provided by the sensor manufacturer.
   // Laser measurement noise standard deviation position1 in m
   std_laspx_ = 0.15;
@@ -49,9 +49,9 @@ UKF::UKF() {
   // Radar measurement noise standard deviation radius change in m/s
   std_radrd_ = 0.3;
   //DO NOT MODIFY measurement noise values above these are provided by the sensor manufacturer.
-  
+
   /**
-  TODO: 
+  TODO:
 
   Complete the initialization. See ukf.h for other member properties.
 
@@ -318,7 +318,7 @@ void UKF::Predict_Mean_Covariance() {
   }
   for (int i = 0; i < 2*n_aug_ + 1; i++) {
     VectorXd x_diff = Xsig_pred_.col(i) - x_;
-    x_diff(3) = NormaliseAngle(x_diff(3));
+    x_diff(3) = Normalization_of_Angle(x_diff(3));
     P_ += weights_(i) * x_diff * x_diff.transpose();
   }
 }
@@ -330,7 +330,7 @@ void UKF::Predict_Mean_Covariance() {
  */
 
 
-// This method propgates sigma points through measurement function for radar, as the radar measurement cannot be directly 
+// This method propgates sigma points through measurement function for radar, as the radar measurement cannot be directly
 void UKF::Predict_Radar_Measurement(VectorXd* z_out, MatrixXd* S_out) {
 
   const int n_z = 3;
@@ -379,7 +379,7 @@ void UKF::Predict_Radar_Measurement(VectorXd* z_out, MatrixXd* S_out) {
   S.setZero();
   for (int i = 0; i < 2*n_aug_ + 1; i++) {
     VectorXd z_diff = Zsig_.col(i) - z_pred;
-    z_diff(1) = NormaliseAngle(z_diff(1));
+    z_diff(1) = Normalization_of_Angle(z_diff(1));
     S += weights_(i) * z_diff * z_diff.transpose();
   }
   S += R;
@@ -461,8 +461,8 @@ void UKF::Update_Radar_State(VectorXd& z, VectorXd& z_pred, MatrixXd& S) {
   for (int i = 0; i < 2*n_aug_ + 1; i++) {
     VectorXd x_diff = Xsig_pred_.col(i) - x_;
     VectorXd z_diff = Zsig_.col(i) - z_pred;
-    x_diff(3) = NormaliseAngle(x_diff(3));
-    z_diff(1) = NormaliseAngle(z_diff(1));
+    x_diff(3) = Normalization_of_Angle(x_diff(3));
+    z_diff(1) = Normalization_of_Angle(z_diff(1));
     Tc += weights_(i) * x_diff * z_diff.transpose();
   }
 
@@ -478,7 +478,7 @@ void UKF::Update_Radar_State(VectorXd& z, VectorXd& z_pred, MatrixXd& S) {
 
 
   VectorXd z_diff = z - z_pred;
-  z_diff(1) = NormaliseAngle(z_diff(1));
+  z_diff(1) = Normalization_of_Angle(z_diff(1));
 
   //update state mean and covariance matrix
   x_ = x_ + K * z_diff;
@@ -503,7 +503,7 @@ void UKF::Update_Lidar_State(VectorXd& z, VectorXd& z_pred, MatrixXd& S) {
   for (int i = 0; i < 2*n_aug_ + 1; i++) {
     VectorXd x_diff = Xsig_pred_.col(i) - x_;
     VectorXd z_diff = Zsig_.col(i) - z_pred;
-    x_diff(3) = NormaliseAngle(x_diff(3));
+    x_diff(3) = Normalization_of_Angle(x_diff(3));
     Tc += weights_(i) * x_diff * z_diff.transpose();
   }
 
@@ -520,5 +520,3 @@ void UKF::Update_Lidar_State(VectorXd& z, VectorXd& z_pred, MatrixXd& S) {
   // calculate NIS
   e_NIS_lidar = z_diff.transpose() * S.inverse() * z_diff;
 }
-
-

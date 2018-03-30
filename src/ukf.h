@@ -17,10 +17,10 @@ public:
   bool is_initialized_;
 
   ///* if this is false, laser measurements will be ignored (except for init)
-  bool use_laser_;
+  bool laser_flag_;
 
   ///* if this is false, radar measurements will be ignored (except for init)
-  bool use_radar_;
+  bool radar_flag_;
 
   ///* state vector: [pos1 pos2 vel_abs yaw_angle yaw_rate] in SI units and rad
   VectorXd x_;
@@ -30,6 +30,9 @@ public:
 
   ///* predicted sigma points matrix
   MatrixXd Xsig_pred_;
+
+  ///* matrix with sigma points propagated through the measurement function
+  MatrixXd Zsig_;
 
   ///* time when the state is true, in us
   long long time_us_;
@@ -67,6 +70,11 @@ public:
   ///* Sigma point spreading parameter
   double lambda_;
 
+  ///* Normalised innovation squared measure for radar
+  double e_NIS_radar;
+
+  ///* Normalised innovation squared measure for lidar
+  double e_NIS_lidar;
 
   /**
    * Constructor
@@ -95,13 +103,29 @@ public:
    * Updates the state and the state covariance matrix using a laser measurement
    * @param meas_package The measurement at k+1
    */
-  void UpdateLidar(MeasurementPackage meas_package);
+  void UpdateLidar(VectorXd measurement);
 
   /**
    * Updates the state and the state covariance matrix using a radar measurement
    * @param meas_package The measurement at k+1
    */
-  void UpdateRadar(MeasurementPackage meas_package);
+  void UpdateRadar(VectorXd measurement);
+
+  MatrixXd Augmented_Sigma_Points();
+
+  void Sigma_Point_Prediction(MatrixXd, double);
+
+  void PredictMeanCovariance();
+
+  void Predict_Radar_Measurement(VectorXd* z_out, MatrixXd* S_out);
+
+  void Predict_Lidar_Measurement(VectorXd* z_out, MatrixXd* S_out);
+
+  void Update_Radar_State(VectorXd& z, VectorXd& z_pred, MatrixXd& S);
+
+  void Update_Lidar_State(VectorXd& z, VectorXd& z_pred, MatrixXd& S);
+
+  double Normalization_of_Angle(double& angle);
 };
 
 #endif /* UKF_H */

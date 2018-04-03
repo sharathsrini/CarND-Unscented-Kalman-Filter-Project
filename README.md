@@ -126,3 +126,81 @@ This is done using flags radar_flag_ and laser_flag in the following lines from 
     UpdateLidar(meas_package.raw_measurements_);
   else
     std::cout << "The  Measurement has been skipped." << endl;
+    
+    
+    [//]: # (Image References)
+[image1]: ./pics/NIS_Radar.png
+[image2]: ./pics/NIS_Lidar.png
+[image3]: ./pics/Tracking.png
+
+
+# Results
+
+## Visualisation
+
+The following graph compares real and estimated values for car coordinates using data from Dataset 1
+
+![alt_text][image3]
+
+### Noise parameters
+Part of the project was to adjust standard deviations `sta_a_` and `std_yawdd` so that RMSE lies below required thresholds. I have conducted experiments for different values of both parameters. The results are presented in the table below (to be short I used the following format: RMSE(`std_a_`, `std_yawdd_`)):
+
+| Parameter | RMSE (3, 2) | RMSE (2, 2) | RMSE (2, 1) | RMSE (1, 1) | RMSE (0.5, 0.5) | RMSE (0.1, 0.1) |
+|:---------:|:-----------:|:-----------:|:-----------:|:-----------:|:---------------:|:---------------:|
+|x          |0.0736       | 0.0702      | 0.0701      | 0.0647      | **0.0612**          | 0.1250          |
+|y          |0.0873       | 0.0858      | 0.0839      | 0.0837      | **0.0860**          | 0.1351          |
+|Vx         |0.3681       | 0.3561      | 0.3446      | 0.3353      | **0.3304**          | 0.4175          |
+|Vy         |0.2688       | 0.2541      | 0.2293      | 0.2195      | **0.2135**          | 0.3156          |
+
+We can see how reducing the process noise parameters up to (0.1, 0.1) leads to worse RMSE. I've also plotted NIS (Normalised Innovation Squared) to perform consistency check for both radar and lidar sensors:
+
+![alt_text][image1]
+
+![alt_text][image2]
+
+## RMSE
+
+The accuracy requirement is that the algortihm should perform with RMSE error lower than some threshold values. This shown in tables below for both datasets:
+
+Dataset 1:
+
+| Parameter | RMSE (0.5, 0.5) | RMSE threshold |
+|:---------:|:----:|:--------------:|
+|x          |0.0612| 0.10           |
+|y          |0.0860| 0.10           |
+|Vx         |0.3304| 0.40           |
+|Vy         |0.2135| 0.30           |
+
+Dataset 2:
+
+| Parameter | RMSE (0.5, 0.5) | RMSE threshold |
+|:---------:|:----:|:--------------:|
+|x          |0.0887| -              |
+|y          |0.0611| -              |
+|Vx         |0.6589| -              |
+|Vy         |0.2822| -              |
+
+
+### EKF and UKF comparison
+
+The following table compares RMSE values for [EKF](https://github.com/SIakovlev/CarND_Term2_P1) and UKF filters (`std_a_, std_yawdd = (3, 2)`) using Dataset 1:
+
+| Parameter | EKF-RMSE (3, 2) | UKF-RMSE (3, 2) |
+|:---------:|:----:|:--------------:|
+|x          |0.0974  | **0.0612**         |
+|y          |0.0855  | **0.0860**         |
+|Vx         |0.4517  | **0.3304**         |
+|Vy         |0.4404  | **0.2135**         |
+
+### UKF: radar and/or lidar measurements
+
+The results are presented for `std_a_, std_yawdd = (3, 2)`:
+
+| Parameter | UKF (L+R) | UKF (L) | UKF (R) |
+|:---------:|:---------:|:-------:|:-------:|
+|x          |**0.0736**   | 0.1148  | 0.1851  |
+|y          |**0.0873**   | 0.1053  | 0.2774  |
+|Vx         |**0.3681**   | 0.6386  | 0.3474  |
+|Vy         |**0.2688**   | 0.3245  | 0.4307  |
+
+

@@ -156,9 +156,7 @@ Part of the project was to adjust standard deviations `sta_a_` and `std_yawdd` s
 
 We can see how reducing the process noise parameters up to (0.1, 0.1) leads to worse RMSE. I've also plotted NIS (Normalised Innovation Squared) to perform consistency check for both radar and lidar sensors:
 
-![alt_text][image1]
 
-![alt_text][image2]
 
 ## RMSE
 
@@ -195,6 +193,9 @@ The following table compares RMSE values for [EKF](https://github.com/SIakovlev/
 |Vy         |0.4404  | **0.2135**         |
 
 ### UKF: radar and/or lidar measurements
+![alt_text][image1]
+
+![alt_text][image2]
 
 The results are presented for `std_a_, std_yawdd = (3, 2)`:
 

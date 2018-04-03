@@ -1,3 +1,8 @@
+    [//]: # (Image References)
+[image1]: ./pics/NIS_Radar.png
+[image2]: ./pics/NIS_Lidar.png
+[image3]: ./pics/Tracking.png
+
 # Unscented Kalman Filter Project Starter Code
 Self-Driving Car Engineer Nanodegree Program
 
@@ -128,10 +133,7 @@ This is done using flags radar_flag_ and laser_flag in the following lines from 
     std::cout << "The  Measurement has been skipped." << endl;
     
     
-    [//]: # (Image References)
-[image1]: ./pics/NIS_Radar.png
-[image2]: ./pics/NIS_Lidar.png
-[image3]: ./pics/Tracking.png
+
 
 
 # Results
